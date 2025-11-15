@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -157,12 +159,13 @@ fun CandleManagerScreen(
 @Composable
 fun MaterialsTab(darkMode: Boolean, viewModel: MaterialsViewModel) {
     val materials by viewModel.getAllMaterials().collectAsState(initial = emptyList())
-    var showDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showRemoveDialog by remember { mutableStateOf<Material?>(null) }
 
     Scaffold(
         containerColor = Color.Transparent,
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog = true }) {
+            FloatingActionButton(onClick = { showAddDialog = true }) {
                 Icon(Icons.Default.Add, contentDescription = "Dodaj materiał")
             }
         }
@@ -192,29 +195,50 @@ fun MaterialsTab(darkMode: Boolean, viewModel: MaterialsViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("${material.name} (${material.category}): ${material.quantity} ${material.unit}")
-                            Text("${material.price} zł")
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("${material.name} (${material.category})")
+                                Text(String.format("Ilość: %.2f %s", material.quantity, material.unit), fontSize = 12.sp)
+                            }
+                            val pricePerUnit = if (material.quantity > 0) material.price / material.quantity else 0.0
+                            Text(String.format("%.2f zł / %s", pricePerUnit, material.unit))
+                            IconButton(onClick = { showRemoveDialog = material }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Usuń materiał", tint = if (darkMode) Color.White else Color.Black)
+                            }
                         }
                     }
                 }
             }
         }
 
-        if (showDialog) {
+        if (showAddDialog) {
             AddMaterialDialog(
-                onDismiss = { showDialog = false },
+                onDismiss = { showAddDialog = false },
                 onAddMaterial = {
                     viewModel.addOrUpdateMaterial(it)
-                    showDialog = false
+                    showAddDialog = false
                 },
                 darkMode = darkMode,
                 existingMaterials = materials
             )
         }
+
+        showRemoveDialog?.let {
+            RemoveMaterialDialog(
+                material = it,
+                onDismiss = { showRemoveDialog = null },
+                onRemove = { material, quantity ->
+                    viewModel.removeMaterial(material, quantity)
+                    showRemoveDialog = null
+                },
+                darkMode = darkMode
+            )
+        }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -226,12 +250,15 @@ fun AddMaterialDialog(
 ) {
     var materialName by remember { mutableStateOf("") }
     var quantity by remember { mutableStateOf("") }
+    var capacityValue by remember { mutableStateOf("") }
+    val capacityUnits = listOf("ml", "g")
+    var capacityUnit by remember { mutableStateOf(capacityUnits.first()) }
+
     val units = listOf("g", "ml", "szt")
     var unit by remember { mutableStateOf(units.first()) }
     var price by remember { mutableStateOf("") }
     val categories = listOf("Wosk", "Olejek", "Knot", "Pojemnik", "Barwnik", "Inne")
     var category by remember { mutableStateOf(categories.first()) }
-
     var nameExpanded by remember { mutableStateOf(false) }
 
     val filteredMaterialNames = existingMaterials
@@ -239,6 +266,11 @@ fun AddMaterialDialog(
         .distinct()
         .filter { it.contains(materialName, ignoreCase = true) }
 
+    LaunchedEffect(category) {
+        if (category == "Pojemnik") {
+            unit = "szt"
+        }
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -285,10 +317,27 @@ fun AddMaterialDialog(
                                 DropdownMenuItem(
                                     text = { Text(selectionOption) },
                                     onClick = {
-                                        materialName = selectionOption
-                                        existingMaterials.find { it.name == selectionOption }?.let {
-                                            category = it.category
-                                            unit = it.unit
+                                        val selectedMaterial = existingMaterials.find { it.name == selectionOption }
+                                        if (selectedMaterial != null) {
+                                            category = selectedMaterial.category
+                                            unit = selectedMaterial.unit
+                                            if (selectedMaterial.category == "Pojemnik") {
+                                                val lastSpaceIndex = selectedMaterial.name.lastIndexOf(' ')
+                                                if (lastSpaceIndex != -1) {
+                                                    materialName = selectedMaterial.name.substring(0, lastSpaceIndex)
+                                                    val capacityAndUnit = selectedMaterial.name.substring(lastSpaceIndex + 1)
+                                                    val value = capacityAndUnit.filter { it.isDigit() }
+                                                    val unit = capacityAndUnit.filter { it.isLetter() }
+                                                    capacityValue = value
+                                                    if (unit in capacityUnits) capacityUnit = unit
+                                                } else {
+                                                    materialName = selectedMaterial.name
+                                                }
+                                            } else {
+                                                materialName = selectedMaterial.name
+                                            }
+                                        } else {
+                                            materialName = selectionOption
                                         }
                                         nameExpanded = false
                                     }
@@ -331,54 +380,107 @@ fun AddMaterialDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                if (category == "Pojemnik") {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(
+                            value = capacityValue,
+                            onValueChange = { capacityValue = it },
+                            label = { Text("Pojemność") },
+                            modifier = Modifier.weight(1f),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        var capacityUnitExpanded by remember { mutableStateOf(false) }
+                        ExposedDropdownMenuBox(
+                            expanded = capacityUnitExpanded,
+                            onExpandedChange = { capacityUnitExpanded = !capacityUnitExpanded },
+                        ) {
+                            OutlinedTextField(
+                                modifier = Modifier.menuAnchor().width(100.dp),
+                                readOnly = true,
+                                value = capacityUnit,
+                                onValueChange = { },
+                                label = { Text("Jedn.") },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = capacityUnitExpanded) },
+                            )
+                            ExposedDropdownMenu(
+                                expanded = capacityUnitExpanded,
+                                onDismissRequest = { capacityUnitExpanded = false }
+                            ) {
+                                capacityUnits.forEach { selectionOption ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectionOption) },
+                                        onClick = {
+                                            capacityUnit = selectionOption
+                                            capacityUnitExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = quantity,
                         onValueChange = { quantity = it },
-                        label = { Text("Ilość") },
-                        modifier = Modifier.weight(1f)
+                        label = { Text("Ilość (szt.)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    var unitExpanded by remember { mutableStateOf(false) }
-                    ExposedDropdownMenuBox( // Changed Box to ExposedDropdownMenuBox for consistency
-                        expanded = unitExpanded,
-                        onExpandedChange = { unitExpanded = !unitExpanded },
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         OutlinedTextField(
-                            modifier = Modifier.menuAnchor().width(100.dp),
-                            readOnly = true,
-                            value = unit,
-                            onValueChange = { },
-                            label = { Text("Jedn.") },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                            value = quantity,
+                            onValueChange = { quantity = it },
+                            label = { Text("Ilość") },
+                            modifier = Modifier.weight(1f),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
-                        ExposedDropdownMenu(
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        var unitExpanded by remember { mutableStateOf(false) }
+                        ExposedDropdownMenuBox(
                             expanded = unitExpanded,
-                            onDismissRequest = { unitExpanded = false }
+                            onExpandedChange = { unitExpanded = !unitExpanded },
                         ) {
-                            units.forEach { selectionOption ->
-                                DropdownMenuItem(
-                                    text = { Text(selectionOption) },
-                                    onClick = {
-                                        unit = selectionOption
-                                        unitExpanded = false
-                                    }
-                                )
+                            OutlinedTextField(
+                                modifier = Modifier.menuAnchor().width(100.dp),
+                                readOnly = true,
+                                value = unit,
+                                onValueChange = { },
+                                label = { Text("Jedn.") },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                            )
+                            ExposedDropdownMenu(
+                                expanded = unitExpanded,
+                                onDismissRequest = { unitExpanded = false }
+                            ) {
+                                units.forEach { selectionOption ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectionOption) },
+                                        onClick = {
+                                            unit = selectionOption
+                                            unitExpanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
+                
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Cena (zł)") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text("Cena całkowita (zł)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -389,10 +491,17 @@ fun AddMaterialDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
+                            val finalName = if (category == "Pojemnik") {
+                                "${materialName.trim()} ${capacityValue.trim()}${capacityUnit}".trim()
+                            } else {
+                                materialName.trim()
+                            }
+                            val finalUnit = if (category == "Pojemnik") "szt" else unit
+
                             val newMaterial = Material(
-                                name = materialName,
+                                name = finalName,
                                 quantity = quantity.toDoubleOrNull() ?: 0.0,
-                                unit = unit,
+                                unit = finalUnit,
                                 price = price.toDoubleOrNull() ?: 0.0,
                                 category = category
                             )
@@ -409,6 +518,64 @@ fun AddMaterialDialog(
         }
     }
 }
+
+@Composable
+fun RemoveMaterialDialog(
+    material: Material,
+    onDismiss: () -> Unit,
+    onRemove: (Material, Double) -> Unit,
+    darkMode: Boolean
+) {
+    var quantityToRemove by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = if (darkMode) Color(0xFF3B3B44) else Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Usuń materiał", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = if (darkMode) Color.White else Color.Black)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(String.format("Dostępna ilość: %.2f %s", material.quantity, material.unit), fontSize = 14.sp, color = if (darkMode) Color(0xFF9CA3AF) else Color(0xFF6B7280))
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = quantityToRemove,
+                    onValueChange = { quantityToRemove = it },
+                    label = { Text("Ilość do usunięcia") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(onClick = { quantityToRemove = String.format("%.2f", material.quantity) }) {
+                    Text("Wszystko")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(modifier = Modifier.align(Alignment.End)) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Anuluj")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            val quantity = quantityToRemove.toDoubleOrNull() ?: 0.0
+                            onRemove(material, quantity)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEC4899))
+                    ) {
+                        Text("Usuń")
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 
 @Composable
 fun CandlesTab(darkMode: Boolean) {

@@ -1,6 +1,7 @@
 package com.example.swieczkomat.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -13,6 +14,9 @@ interface MaterialDao {
 
     @Update
     suspend fun update(material: Material)
+
+    @Delete
+    suspend fun delete(material: Material)
 
     @Query("SELECT * FROM materials ORDER BY name ASC")
     fun getAllMaterials(): Flow<List<Material>>
