@@ -7,8 +7,12 @@ import androidx.room.PrimaryKey
 data class Material(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val quantity: Double,
-    val unit: String,
     val price: Double,
-    val category: String
+    val category: String,
+    val materialType: MaterialType
 )
+
+sealed class MaterialType {
+    data class Wick(val lengthInMeters: Double) : MaterialType()
+    data class Other(val quantity: Double, val unit: String) : MaterialType()
+}

@@ -51,7 +51,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-
+    // Foundation (pager) – użycie artefaktu bez katalogu wersji jako fallback
+    implementation("androidx.compose.foundation:foundation")
     // Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
