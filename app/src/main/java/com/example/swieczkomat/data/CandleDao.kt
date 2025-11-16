@@ -14,6 +14,15 @@ interface CandleDao {
     @Query("SELECT * FROM candles ORDER BY dateMade DESC")
     fun getAllCandles(): Flow<List<Candle>>
 
+    @Query("SELECT * FROM candles WHERE id = :id")
+    suspend fun getById(id: Int): Candle?
+
+    @Query("DELETE FROM candles WHERE id = :id")
+    suspend fun deleteById(id: Int)
+
     @Query("UPDATE candles SET burnTimeMinutes = :minutes WHERE id = :id")
     suspend fun updateBurnTime(id: Int, minutes: Int)
+
+    @Query("UPDATE candles SET burnTimeMinutes = burnTimeMinutes + :delta WHERE id = :id")
+    suspend fun incrementBurnTime(id: Int, delta: Int)
 }

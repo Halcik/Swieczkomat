@@ -54,6 +54,10 @@ fun AddMaterialDialog(
         }
     }
 
+    val fieldContainerColor = if (darkMode) Color(0xFF2F2F35) else Color(0xFFF3F4F6)
+    val fieldTextColor = if (darkMode) Color.White else Color.Black
+    val fieldLabelColor = if (darkMode) Color(0xFFCBD5E1) else Color(0xFF374151)
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier.padding(16.dp),
@@ -73,8 +77,18 @@ fun AddMaterialDialog(
                             materialName = it
                             nameExpanded = true // otwórz menu przy wpisywaniu
                         },
-                        label = { Text("Nazwa materiału") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = nameExpanded) }
+                        label = { Text("Nazwa materiału", color = fieldLabelColor) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = nameExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                     if (nameExpanded && filteredMaterialNames.isNotEmpty()) {
                         ExposedDropdownMenu(expanded = nameExpanded, onDismissRequest = { nameExpanded = false }) {
@@ -133,9 +147,19 @@ fun AddMaterialDialog(
                             OutlinedTextField(
                                 value = capacityValue,
                                 onValueChange = { capacityValue = it },
-                                label = { Text("Pojemność") },
+                                label = { Text("Pojemność", color = fieldLabelColor) },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             var capUnitExpanded by remember { mutableStateOf(false) }
@@ -145,8 +169,18 @@ fun AddMaterialDialog(
                                     readOnly = true,
                                     value = capacityUnit,
                                     onValueChange = {},
-                                    label = { Text("Jedn.") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = capUnitExpanded) }
+                                    label = { Text("Jedn.", color = fieldLabelColor) },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = capUnitExpanded) },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = fieldContainerColor,
+                                        unfocusedContainerColor = fieldContainerColor,
+                                        disabledContainerColor = fieldContainerColor,
+                                        focusedTextColor = fieldTextColor,
+                                        unfocusedTextColor = fieldTextColor,
+                                        focusedLabelColor = fieldLabelColor,
+                                        unfocusedLabelColor = fieldLabelColor,
+                                        cursorColor = fieldTextColor
+                                    )
                                 )
                                 ExposedDropdownMenu(expanded = capUnitExpanded, onDismissRequest = { capUnitExpanded = false }) {
                                     capacityUnits.forEach { cu -> DropdownMenuItem(text = { Text(cu) }, onClick = { capacityUnit = cu; capUnitExpanded = false }) }
@@ -157,9 +191,19 @@ fun AddMaterialDialog(
                         OutlinedTextField(
                             value = quantity,
                             onValueChange = { quantity = it },
-                            label = { Text("Ilość (szt.)") },
+                            label = { Text("Ilość (szt.)", color = fieldLabelColor) },
                             modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = fieldContainerColor,
+                                unfocusedContainerColor = fieldContainerColor,
+                                disabledContainerColor = fieldContainerColor,
+                                focusedTextColor = fieldTextColor,
+                                unfocusedTextColor = fieldTextColor,
+                                focusedLabelColor = fieldLabelColor,
+                                unfocusedLabelColor = fieldLabelColor,
+                                cursorColor = fieldTextColor
+                            )
                         )
                         Spacer(Modifier.height(8.dp))
                         // Preferowany knot
@@ -170,8 +214,18 @@ fun AddMaterialDialog(
                                 readOnly = true,
                                 value = preferredWickName,
                                 onValueChange = {},
-                                label = { Text("Preferowany knot") },
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) }
+                                label = { Text("Preferowany knot", color = fieldLabelColor) },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             ExposedDropdownMenu(expanded = wickExpanded, onDismissRequest = { wickExpanded = false }) {
                                 wicks.forEach { w -> DropdownMenuItem(text = { Text(w) }, onClick = { preferredWickName = w; wickExpanded = false }) }
@@ -183,9 +237,19 @@ fun AddMaterialDialog(
                             OutlinedTextField(
                                 value = quantity,
                                 onValueChange = { quantity = it },
-                                label = { Text("Ilość") },
+                                label = { Text("Ilość", color = fieldLabelColor) },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             // Jednostka dla olejku (ml/g) uproszczenie
@@ -196,8 +260,18 @@ fun AddMaterialDialog(
                                     readOnly = true,
                                     value = unit,
                                     onValueChange = {},
-                                    label = { Text("Jedn.") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) }
+                                    label = { Text("Jedn.", color = fieldLabelColor) },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = fieldContainerColor,
+                                        unfocusedContainerColor = fieldContainerColor,
+                                        disabledContainerColor = fieldContainerColor,
+                                        focusedTextColor = fieldTextColor,
+                                        unfocusedTextColor = fieldTextColor,
+                                        focusedLabelColor = fieldLabelColor,
+                                        unfocusedLabelColor = fieldLabelColor,
+                                        cursorColor = fieldTextColor
+                                    )
                                 )
                                 ExposedDropdownMenu(expanded = unitExpanded, onDismissRequest = { unitExpanded = false }) {
                                     listOf("ml", "g").forEach { u -> DropdownMenuItem(text = { Text(u) }, onClick = { unit = u; unitExpanded = false }) }
@@ -208,9 +282,19 @@ fun AddMaterialDialog(
                         OutlinedTextField(
                             value = preferredConcentration,
                             onValueChange = { preferredConcentration = it },
-                            label = { Text("Preferowane stężenie (%)") },
+                            label = { Text("Preferowane stężenie (%)", color = fieldLabelColor) },
                             modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = fieldContainerColor,
+                                unfocusedContainerColor = fieldContainerColor,
+                                disabledContainerColor = fieldContainerColor,
+                                focusedTextColor = fieldTextColor,
+                                unfocusedTextColor = fieldTextColor,
+                                focusedLabelColor = fieldLabelColor,
+                                unfocusedLabelColor = fieldLabelColor,
+                                cursorColor = fieldTextColor
+                            )
                         )
                     }
                     else -> {
@@ -218,9 +302,19 @@ fun AddMaterialDialog(
                             OutlinedTextField(
                                 value = quantity,
                                 onValueChange = { quantity = it },
-                                label = { Text("Ilość") },
+                                label = { Text("Ilość", color = fieldLabelColor) },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             var unitExpanded by remember { mutableStateOf(false) }
@@ -230,8 +324,18 @@ fun AddMaterialDialog(
                                     readOnly = true,
                                     value = unit,
                                     onValueChange = {},
-                                    label = { Text("Jedn.") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) }
+                                    label = { Text("Jedn.", color = fieldLabelColor) },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = fieldContainerColor,
+                                        unfocusedContainerColor = fieldContainerColor,
+                                        disabledContainerColor = fieldContainerColor,
+                                        focusedTextColor = fieldTextColor,
+                                        unfocusedTextColor = fieldTextColor,
+                                        focusedLabelColor = fieldLabelColor,
+                                        unfocusedLabelColor = fieldLabelColor,
+                                        cursorColor = fieldTextColor
+                                    )
                                 )
                                 ExposedDropdownMenu(expanded = unitExpanded, onDismissRequest = { unitExpanded = false }) {
                                     (if (category == "Knot") listOf("szt", "m") else unitsBase).forEach { u -> DropdownMenuItem(text = { Text(u) }, onClick = { unit = u; unitExpanded = false }) }
@@ -246,9 +350,19 @@ fun AddMaterialDialog(
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Cena całkowita (zł)") },
+                    label = { Text("Cena całkowita (zł)", color = fieldLabelColor) },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
                 )
                 Spacer(Modifier.height(16.dp))
                 Row(modifier = Modifier.align(Alignment.End)) {
@@ -310,6 +424,12 @@ fun EditMaterialDialog(
         }
     }
 
+    val unitsBase = listOf("g", "ml", "szt", "m")
+
+    val fieldContainerColor = if (darkMode) Color(0xFF2F2F35) else Color(0xFFF3F4F6)
+    val fieldTextColor = if (darkMode) Color.White else Color.Black
+    val fieldLabelColor = if (darkMode) Color(0xFFCBD5E1) else Color(0xFF374151)
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier.padding(16.dp),
@@ -322,8 +442,18 @@ fun EditMaterialDialog(
                 OutlinedTextField(
                     value = materialName,
                     onValueChange = { materialName = it },
-                    label = { Text("Nazwa materiału") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text("Nazwa materiału", color = fieldLabelColor) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
                 )
                 Spacer(Modifier.height(8.dp))
 
@@ -349,9 +479,19 @@ fun EditMaterialDialog(
                             OutlinedTextField(
                                 value = capacityValue,
                                 onValueChange = { capacityValue = it },
-                                label = { Text("Pojemność") },
+                                label = { Text("Pojemność", color = fieldLabelColor) },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             var capUnitExpanded by remember { mutableStateOf(false) }
@@ -361,8 +501,18 @@ fun EditMaterialDialog(
                                     readOnly = true,
                                     value = capacityUnit,
                                     onValueChange = {},
-                                    label = { Text("Jedn.") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = capUnitExpanded) }
+                                    label = { Text("Jedn.", color = fieldLabelColor) },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = capUnitExpanded) },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = fieldContainerColor,
+                                        unfocusedContainerColor = fieldContainerColor,
+                                        disabledContainerColor = fieldContainerColor,
+                                        focusedTextColor = fieldTextColor,
+                                        unfocusedTextColor = fieldTextColor,
+                                        focusedLabelColor = fieldLabelColor,
+                                        unfocusedLabelColor = fieldLabelColor,
+                                        cursorColor = fieldTextColor
+                                    )
                                 )
                                 ExposedDropdownMenu(expanded = capUnitExpanded, onDismissRequest = { capUnitExpanded = false }) {
                                     capacityUnits.forEach { cu -> DropdownMenuItem(text = { Text(cu) }, onClick = { capacityUnit = cu; capUnitExpanded = false }) }
@@ -373,9 +523,19 @@ fun EditMaterialDialog(
                         OutlinedTextField(
                             value = quantity,
                             onValueChange = { quantity = it },
-                            label = { Text("Ilość (szt.)") },
+                            label = { Text("Ilość (szt.)", color = fieldLabelColor) },
                             modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = fieldContainerColor,
+                                unfocusedContainerColor = fieldContainerColor,
+                                disabledContainerColor = fieldContainerColor,
+                                focusedTextColor = fieldTextColor,
+                                unfocusedTextColor = fieldTextColor,
+                                focusedLabelColor = fieldLabelColor,
+                                unfocusedLabelColor = fieldLabelColor,
+                                cursorColor = fieldTextColor
+                            )
                         )
                         Spacer(Modifier.height(8.dp))
                         var wickExpanded by remember { mutableStateOf(false) }
@@ -386,8 +546,18 @@ fun EditMaterialDialog(
                                 readOnly = true,
                                 value = preferredWickName,
                                 onValueChange = {},
-                                label = { Text("Preferowany knot") },
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) }
+                                label = { Text("Preferowany knot", color = fieldLabelColor) },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             ExposedDropdownMenu(expanded = wickExpanded, onDismissRequest = { wickExpanded = false }) {
                                 wicks.forEach { w -> DropdownMenuItem(text = { Text(w) }, onClick = { preferredWickName = w; wickExpanded = false }) }
@@ -399,9 +569,19 @@ fun EditMaterialDialog(
                             OutlinedTextField(
                                 value = quantity,
                                 onValueChange = { quantity = it },
-                                label = { Text("Ilość") },
+                                label = { Text("Ilość", color = fieldLabelColor) },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             var unitExpanded by remember { mutableStateOf(false) }
@@ -411,8 +591,18 @@ fun EditMaterialDialog(
                                     readOnly = true,
                                     value = unit,
                                     onValueChange = {},
-                                    label = { Text("Jedn.") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) }
+                                    label = { Text("Jedn.", color = fieldLabelColor) },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = fieldContainerColor,
+                                        unfocusedContainerColor = fieldContainerColor,
+                                        disabledContainerColor = fieldContainerColor,
+                                        focusedTextColor = fieldTextColor,
+                                        unfocusedTextColor = fieldTextColor,
+                                        focusedLabelColor = fieldLabelColor,
+                                        unfocusedLabelColor = fieldLabelColor,
+                                        cursorColor = fieldTextColor
+                                    )
                                 )
                                 ExposedDropdownMenu(expanded = unitExpanded, onDismissRequest = { unitExpanded = false }) {
                                     listOf("ml", "g").forEach { u -> DropdownMenuItem(text = { Text(u) }, onClick = { unit = u; unitExpanded = false }) }
@@ -423,9 +613,19 @@ fun EditMaterialDialog(
                         OutlinedTextField(
                             value = preferredConcentration,
                             onValueChange = { preferredConcentration = it },
-                            label = { Text("Preferowane stężenie (%)") },
+                            label = { Text("Preferowane stężenie (%)", color = fieldLabelColor) },
                             modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = fieldContainerColor,
+                                unfocusedContainerColor = fieldContainerColor,
+                                disabledContainerColor = fieldContainerColor,
+                                focusedTextColor = fieldTextColor,
+                                unfocusedTextColor = fieldTextColor,
+                                focusedLabelColor = fieldLabelColor,
+                                unfocusedLabelColor = fieldLabelColor,
+                                cursorColor = fieldTextColor
+                            )
                         )
                     }
                     else -> {
@@ -433,21 +633,40 @@ fun EditMaterialDialog(
                             OutlinedTextField(
                                 value = quantity,
                                 onValueChange = { quantity = it },
-                                label = { Text("Ilość") },
+                                label = { Text("Ilość", color = fieldLabelColor) },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = fieldContainerColor,
+                                    unfocusedContainerColor = fieldContainerColor,
+                                    disabledContainerColor = fieldContainerColor,
+                                    focusedTextColor = fieldTextColor,
+                                    unfocusedTextColor = fieldTextColor,
+                                    focusedLabelColor = fieldLabelColor,
+                                    unfocusedLabelColor = fieldLabelColor,
+                                    cursorColor = fieldTextColor
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             var unitExpanded by remember { mutableStateOf(false) }
-                            val unitsBase = listOf("g", "ml", "szt", "m")
                             ExposedDropdownMenuBox(expanded = unitExpanded, onExpandedChange = { unitExpanded = !unitExpanded }) {
                                 OutlinedTextField(
                                     modifier = Modifier.menuAnchor().width(90.dp),
                                     readOnly = true,
                                     value = unit,
                                     onValueChange = {},
-                                    label = { Text("Jedn.") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) }
+                                    label = { Text("Jedn.", color = fieldLabelColor) },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = fieldContainerColor,
+                                        unfocusedContainerColor = fieldContainerColor,
+                                        disabledContainerColor = fieldContainerColor,
+                                        focusedTextColor = fieldTextColor,
+                                        unfocusedTextColor = fieldTextColor,
+                                        focusedLabelColor = fieldLabelColor,
+                                        unfocusedLabelColor = fieldLabelColor,
+                                        cursorColor = fieldTextColor
+                                    )
                                 )
                                 ExposedDropdownMenu(expanded = unitExpanded, onDismissRequest = { unitExpanded = false }) {
                                     (if (category == "Knot") listOf("szt", "m") else unitsBase).forEach { u -> DropdownMenuItem(text = { Text(u) }, onClick = { unit = u; unitExpanded = false }) }
@@ -462,9 +681,19 @@ fun EditMaterialDialog(
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Cena całkowita (zł)") },
+                    label = { Text("Cena całkowita (zł)", color = fieldLabelColor) },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
                 )
                 Spacer(Modifier.height(16.dp))
                 Row(modifier = Modifier.align(Alignment.End)) {
@@ -500,6 +729,9 @@ fun RemoveMaterialDialog(
     darkMode: Boolean
 ) {
     var quantityToRemove by remember { mutableStateOf("") }
+    val fieldContainerColor = if (darkMode) Color(0xFF2F2F35) else Color(0xFFF3F4F6)
+    val fieldTextColor = if (darkMode) Color.White else Color.Black
+    val fieldLabelColor = if (darkMode) Color(0xFFCBD5E1) else Color(0xFF374151)
     Dialog(onDismissRequest = onDismiss) {
         Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = if (darkMode) Color(0xFF3B3B44) else Color.White)) {
             Column(modifier = Modifier.padding(16.dp).fillMaxWidth(), horizontalAlignment = Alignment.Start) {
@@ -507,7 +739,22 @@ fun RemoveMaterialDialog(
                 Spacer(Modifier.height(16.dp))
                 Text(String.format(Locale.getDefault(), "Dostępna ilość: %.2f %s", material.quantity, material.unit), fontSize = 14.sp, color = if (darkMode) Color(0xFF9CA3AF) else Color(0xFF6B7280))
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(value = quantityToRemove, onValueChange = { quantityToRemove = it }, label = { Text("Ilość do usunięcia") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                OutlinedTextField(
+                    value = quantityToRemove,
+                    onValueChange = { quantityToRemove = it },
+                    label = { Text("Ilość do usunięcia", color = fieldLabelColor) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
+                )
                 Spacer(Modifier.height(8.dp))
                 TextButton(onClick = { quantityToRemove = String.format(Locale.getDefault(), "%.2f", material.quantity) }) { Text("Wszystko") }
                 Spacer(Modifier.height(16.dp))

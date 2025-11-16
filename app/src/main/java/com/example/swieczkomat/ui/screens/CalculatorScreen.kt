@@ -154,6 +154,10 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
         totalPrice = singleCandlePrice * count
     }
 
+    val fieldContainerColor = if (darkMode) Color(0xFF2F2F35) else Color(0xFFF3F4F6)
+    val fieldTextColor = if (darkMode) Color.White else Color.Black
+    val fieldLabelColor = if (darkMode) Color(0xFFCBD5E1) else Color(0xFF374151)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -164,16 +168,25 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
             "Kalkulator Świeczek",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = textColor,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            color = textColor
         )
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
             value = concentration,
             onValueChange = { concentration = it },
-            label = { Text("Stężenie zapachu (%)") },
+            label = { Text("Stężenie zapachu (%)", color = fieldLabelColor) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = fieldContainerColor,
+                unfocusedContainerColor = fieldContainerColor,
+                disabledContainerColor = fieldContainerColor,
+                focusedTextColor = fieldTextColor,
+                unfocusedTextColor = fieldTextColor,
+                focusedLabelColor = fieldLabelColor,
+                unfocusedLabelColor = fieldLabelColor,
+                cursorColor = fieldTextColor
+            )
         )
         Spacer(Modifier.height(8.dp))
 
@@ -187,8 +200,18 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
                 readOnly = true,
                 value = selectedContainer?.name ?: "",
                 onValueChange = {},
-                label = { Text("Pojemnik") },
+                label = { Text("Pojemnik", color = fieldLabelColor) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = containerExpanded) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                    disabledContainerColor = fieldContainerColor,
+                    focusedTextColor = fieldTextColor,
+                    unfocusedTextColor = fieldTextColor,
+                    focusedLabelColor = fieldLabelColor,
+                    unfocusedLabelColor = fieldLabelColor,
+                    cursorColor = fieldTextColor
+                )
             )
             ExposedDropdownMenu(
                 expanded = containerExpanded,
@@ -217,8 +240,18 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
                 readOnly = true,
                 value = selectedWax?.name ?: "",
                 onValueChange = {},
-                label = { Text("Wosk") },
+                label = { Text("Wosk", color = fieldLabelColor) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = waxExpanded) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                    disabledContainerColor = fieldContainerColor,
+                    focusedTextColor = fieldTextColor,
+                    unfocusedTextColor = fieldTextColor,
+                    focusedLabelColor = fieldLabelColor,
+                    unfocusedLabelColor = fieldLabelColor,
+                    cursorColor = fieldTextColor
+                )
             )
             ExposedDropdownMenu(
                 expanded = waxExpanded,
@@ -247,8 +280,18 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
                 readOnly = true,
                 value = selectedFragrance?.name ?: "",
                 onValueChange = {},
-                label = { Text("Olejek") },
+                label = { Text("Olejek", color = fieldLabelColor) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = fragranceExpanded) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                    disabledContainerColor = fieldContainerColor,
+                    focusedTextColor = fieldTextColor,
+                    unfocusedTextColor = fieldTextColor,
+                    focusedLabelColor = fieldLabelColor,
+                    unfocusedLabelColor = fieldLabelColor,
+                    cursorColor = fieldTextColor
+                )
             )
             ExposedDropdownMenu(
                 expanded = fragranceExpanded,
@@ -277,8 +320,18 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
                 readOnly = true,
                 value = selectedWick?.name ?: "",
                 onValueChange = {},
-                label = { Text("Knot") },
+                label = { Text("Knot", color = fieldLabelColor) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                    disabledContainerColor = fieldContainerColor,
+                    focusedTextColor = fieldTextColor,
+                    unfocusedTextColor = fieldTextColor,
+                    focusedLabelColor = fieldLabelColor,
+                    unfocusedLabelColor = fieldLabelColor,
+                    cursorColor = fieldTextColor
+                )
             )
             ExposedDropdownMenu(
                 expanded = wickExpanded,
@@ -300,9 +353,19 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
             OutlinedTextField(
                 value = wickLength,
                 onValueChange = { wickLength = it },
-                label = { Text("Długość knota (m)") },
+                label = { Text("Długość knota (m)", color = fieldLabelColor) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                    disabledContainerColor = fieldContainerColor,
+                    focusedTextColor = fieldTextColor,
+                    unfocusedTextColor = fieldTextColor,
+                    focusedLabelColor = fieldLabelColor,
+                    unfocusedLabelColor = fieldLabelColor,
+                    cursorColor = fieldTextColor
+                )
             )
         }
         Spacer(Modifier.height(8.dp))
@@ -317,8 +380,18 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
                 readOnly = true,
                 value = selectedDye?.name ?: "",
                 onValueChange = {},
-                label = { Text("Barwnik (opcjonalnie)") },
+                label = { Text("Barwnik (opcjonalnie)", color = fieldLabelColor) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dyeExpanded) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                    disabledContainerColor = fieldContainerColor,
+                    focusedTextColor = fieldTextColor,
+                    unfocusedTextColor = fieldTextColor,
+                    focusedLabelColor = fieldLabelColor,
+                    unfocusedLabelColor = fieldLabelColor,
+                    cursorColor = fieldTextColor
+                )
             )
             ExposedDropdownMenu(
                 expanded = dyeExpanded,
@@ -339,9 +412,19 @@ fun CalculatorTab(darkMode: Boolean, viewModel: MaterialsViewModel, candleViewMo
         OutlinedTextField(
             value = candleCount,
             onValueChange = { candleCount = it },
-            label = { Text("Ilość świeczek") },
+            label = { Text("Ilość świeczek", color = fieldLabelColor) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = fieldContainerColor,
+                unfocusedContainerColor = fieldContainerColor,
+                disabledContainerColor = fieldContainerColor,
+                focusedTextColor = fieldTextColor,
+                unfocusedTextColor = fieldTextColor,
+                focusedLabelColor = fieldLabelColor,
+                unfocusedLabelColor = fieldLabelColor,
+                cursorColor = fieldTextColor
+            )
         )
         Spacer(Modifier.height(12.dp))
         Column(modifier = Modifier.align(Alignment.Start)) {

@@ -19,6 +19,10 @@ import java.util.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.rememberDatePickerState
+import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,15 +48,28 @@ fun SaveCandlesDialog(
             Column(modifier = Modifier.padding(16.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Zapisz świeczki", fontSize = 20.sp, color = if (darkMode) Color.White else Color.Black)
                 Spacer(Modifier.height(12.dp))
+                val fieldContainerColor = if (darkMode) Color(0xFF2F2F35) else Color(0xFFF3F4F6)
+                val fieldTextColor = if (darkMode) Color.White else Color.Black
+                val fieldLabelColor = if (darkMode) Color(0xFFCBD5E1) else Color(0xFF374151)
                 OutlinedTextField(
                     value = forWhom,
                     onValueChange = { forWhom = it },
-                    label = { Text("Dla kogo?") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text("Dla kogo?", color = fieldLabelColor) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
                 )
                 Spacer(Modifier.height(12.dp))
                 val singleCost = if (count > 0) totalPrice / count else 0.0
-                Text("Koszt / świeczkę: ${String.format(Locale.getDefault(),"%.2f zł", singleCost)}")
+                Text("Koszt / świeczkę: ${String.format(Locale.getDefault(),"%.2f zł", singleCost)}", color = if (darkMode) Color(0xFFFAFAFA) else Color.Black)
                 Spacer(Modifier.height(16.dp))
                 Row(modifier = Modifier.align(Alignment.End)) {
                     TextButton(onClick = onDismiss) { Text("Anuluj") }
@@ -103,6 +120,11 @@ fun AddCandleDialog(
     var selectedDye by remember { mutableStateOf<Material?>(null) }
     var wickLength by remember { mutableStateOf("0.15") }
     var forWhom by remember { mutableStateOf("") }
+    // --- NOWE: data wykonania ---
+    val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
+    var dateDialogOpen by remember { mutableStateOf(false) }
+    var selectedDateMillis by remember { mutableStateOf<Long?>(System.currentTimeMillis()) }
 
     // Filtrowanie kategorii
     val containers = materials.filter { it.category == "Pojemnik" }
@@ -156,23 +178,29 @@ fun AddCandleDialog(
             Column(modifier = Modifier.padding(16.dp).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 Text("Dodaj świeczki", fontSize = 20.sp, color = textColor)
                 Spacer(Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = forWhom,
-                    onValueChange = { forWhom = it },
-                    label = { Text("Dla kogo?") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(12.dp))
                 // Dropdowny wyboru materiałów (używamy wzorca jak w kalkulatorze)
                 var containerExpanded by remember { mutableStateOf(false) }
+                val fieldContainerColor = if (darkMode) Color(0xFF2F2F35) else Color(0xFFF3F4F6)
+                val fieldTextColor = if (darkMode) Color.White else Color.Black
+                val fieldLabelColor = if (darkMode) Color(0xFFCBD5E1) else Color(0xFF374151)
                 ExposedDropdownMenuBox(expanded = containerExpanded, onExpandedChange = { containerExpanded = !containerExpanded }) {
                     OutlinedTextField(
                         modifier = Modifier.menuAnchor().fillMaxWidth(),
                         readOnly = true,
                         value = selectedContainer?.name ?: "",
                         onValueChange = {},
-                        label = { Text("Pojemnik") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = containerExpanded) }
+                        label = { Text("Pojemnik", color = fieldLabelColor) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = containerExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                     ExposedDropdownMenu(expanded = containerExpanded, onDismissRequest = { containerExpanded = false }) {
                         containers.forEach { c ->
@@ -188,8 +216,18 @@ fun AddCandleDialog(
                         readOnly = true,
                         value = selectedWax?.name ?: "",
                         onValueChange = {},
-                        label = { Text("Wosk") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = waxExpanded) }
+                        label = { Text("Wosk", color = fieldLabelColor) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = waxExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                     ExposedDropdownMenu(expanded = waxExpanded, onDismissRequest = { waxExpanded = false }) {
                         waxes.forEach { w -> DropdownMenuItem(text = { Text(w.name) }, onClick = { selectedWax = w; waxExpanded = false }) }
@@ -203,8 +241,18 @@ fun AddCandleDialog(
                         readOnly = true,
                         value = selectedFragrance?.name ?: "",
                         onValueChange = {},
-                        label = { Text("Olejek") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = fragranceExpanded) }
+                        label = { Text("Olejek", color = fieldLabelColor) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = fragranceExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                     ExposedDropdownMenu(expanded = fragranceExpanded, onDismissRequest = { fragranceExpanded = false }) {
                         fragrances.forEach { f -> DropdownMenuItem(text = { Text(f.name) }, onClick = { selectedFragrance = f; fragranceExpanded = false }) }
@@ -218,8 +266,18 @@ fun AddCandleDialog(
                         readOnly = true,
                         value = selectedWick?.name ?: "",
                         onValueChange = {},
-                        label = { Text("Knot") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) }
+                        label = { Text("Knot", color = fieldLabelColor) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = wickExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                     ExposedDropdownMenu(expanded = wickExpanded, onDismissRequest = { wickExpanded = false }) {
                         wicks.forEach { wk -> DropdownMenuItem(text = { Text(wk.name) }, onClick = { selectedWick = wk; wickExpanded = false }) }
@@ -230,9 +288,19 @@ fun AddCandleDialog(
                     OutlinedTextField(
                         value = wickLength,
                         onValueChange = { wickLength = it },
-                        label = { Text("Długość knota (m)") },
+                        label = { Text("Długość knota (m)", color = fieldLabelColor) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                 }
                 Spacer(Modifier.height(8.dp))
@@ -243,8 +311,18 @@ fun AddCandleDialog(
                         readOnly = true,
                         value = selectedDye?.name ?: "",
                         onValueChange = {},
-                        label = { Text("Barwnik (opcjonalnie)") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dyeExpanded) }
+                        label = { Text("Barwnik (opcjonalnie)", color = fieldLabelColor) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dyeExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
                     )
                     ExposedDropdownMenu(expanded = dyeExpanded, onDismissRequest = { dyeExpanded = false }) {
                         dyes.forEach { dy -> DropdownMenuItem(text = { Text(dy.name) }, onClick = { selectedDye = dy; dyeExpanded = false }) }
@@ -254,18 +332,97 @@ fun AddCandleDialog(
                 OutlinedTextField(
                     value = concentration,
                     onValueChange = { concentration = it },
-                    label = { Text("Stężenie zapachu (%)") },
+                    label = { Text("Stężenie zapachu (%)", color = fieldLabelColor) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = count,
                     onValueChange = { count = it },
-                    label = { Text("Ilość świeczek") },
+                    label = { Text("Ilość świeczek", color = fieldLabelColor) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
                 )
+                // --- NOWE: pole dla kogo ---
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = forWhom,
+                    onValueChange = { forWhom = it },
+                    label = { Text("Dla kogo?", color = fieldLabelColor) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                        disabledContainerColor = fieldContainerColor,
+                        focusedTextColor = fieldTextColor,
+                        unfocusedTextColor = fieldTextColor,
+                        focusedLabelColor = fieldLabelColor,
+                        unfocusedLabelColor = fieldLabelColor,
+                        cursorColor = fieldTextColor
+                    )
+                )
+                // --- NOWE: wybór daty wykonania ---
+                Spacer(Modifier.height(12.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = selectedDateMillis?.let { dateFormat.format(Date(it)) } ?: "",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Data zrobienia", color = fieldLabelColor) },
+                        modifier = Modifier.weight(1f),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = fieldContainerColor,
+                            unfocusedContainerColor = fieldContainerColor,
+                            disabledContainerColor = fieldContainerColor,
+                            focusedTextColor = fieldTextColor,
+                            unfocusedTextColor = fieldTextColor,
+                            focusedLabelColor = fieldLabelColor,
+                            unfocusedLabelColor = fieldLabelColor,
+                            cursorColor = fieldTextColor
+                        )
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Button(onClick = { dateDialogOpen = true }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6366F1))) {
+                        Text("Wybierz")
+                    }
+                }
+                if (dateDialogOpen) {
+                    DatePickerDialog(
+                        onDismissRequest = { dateDialogOpen = false },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                selectedDateMillis = datePickerState.selectedDateMillis
+                                dateDialogOpen = false
+                            }) { Text("OK") }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { dateDialogOpen = false }) { Text("Anuluj") }
+                        }
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
+                }
                 Spacer(Modifier.height(12.dp))
                 val candleCount = count.toIntOrNull() ?: 1
                 val singleCost = if (candleCount > 0) totalPrice / candleCount else 0.0
@@ -277,11 +434,11 @@ fun AddCandleDialog(
                     TextButton(onClick = onDismiss) { Text("Anuluj") }
                     Spacer(Modifier.width(8.dp))
                     Button(
-                        enabled = selectedContainer != null && selectedWax != null && selectedFragrance != null && selectedWick != null && (count.toIntOrNull() ?: 0) > 0 && totalPrice > 0.0,
+                        enabled = selectedContainer != null && selectedWax != null && selectedFragrance != null && selectedWick != null && (count.toIntOrNull() ?: 0) > 0 && totalPrice > 0.0 && selectedDateMillis != null,
                         onClick = {
                             val capacity = selectedContainer?.let { MaterialUtils.extractCapacity(it.name) } ?: 0.0
-                            val now = System.currentTimeMillis()
-                            val dateToLight = now + 14L * 24 * 60 * 60 * 1000
+                            val baseDate = selectedDateMillis ?: System.currentTimeMillis()
+                            val dateToLight = baseDate + 14L * 24 * 60 * 60 * 1000
                             val list = (1..candleCount).map {
                                 Candle(
                                     containerName = selectedContainer?.name,
@@ -293,7 +450,7 @@ fun AddCandleDialog(
                                     capacity = capacity,
                                     cost = singleCost,
                                     forWhom = forWhom.ifBlank { "" },
-                                    dateMade = now,
+                                    dateMade = baseDate,
                                     dateToLight = dateToLight,
                                     burnTimeMinutes = 0
                                 )

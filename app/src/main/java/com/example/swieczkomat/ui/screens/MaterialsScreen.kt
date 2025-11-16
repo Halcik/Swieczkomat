@@ -30,26 +30,17 @@ fun MaterialsTab(darkMode: Boolean, viewModel: MaterialsViewModel) {
     var showRemoveDialog by remember { mutableStateOf<Material?>(null) }
     val topSpacing = 12.dp
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        floatingActionButton = {
-            FloatingActionButton(onClick = { showAddDialog = true }) {
-                Icon(Icons.Default.Add, contentDescription = "Dodaj materiał")
-            }
-        }
-    ) { innerPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(start = 12.dp, end = 12.dp, top = topSpacing)
         ) {
             Text(
                 "Lista materiałów",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = if (darkMode) Color.White else Color.Black,
-                modifier = Modifier.padding(start = 4.dp) // wyrównanie do lewej
+                color = if (darkMode) Color.White else Color.Black
             )
             Spacer(Modifier.height(12.dp))
             LazyColumn {
@@ -63,6 +54,12 @@ fun MaterialsTab(darkMode: Boolean, viewModel: MaterialsViewModel) {
                 }
             }
         }
+        FloatingActionButton(
+            onClick = { showAddDialog = true },
+            containerColor = Color(0xFF2563EB),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+        ) { Icon(Icons.Default.Add, contentDescription = "Dodaj materiał", tint = Color.White) }
+
         if (showAddDialog) AddMaterialDialog(onDismiss = { showAddDialog = false }, onAddMaterial = { viewModel.addOrUpdateMaterial(it); showAddDialog = false }, darkMode = darkMode, existingMaterials = materials)
         showEditDialog?.let { EditMaterialDialog(material = it, onDismiss = { showEditDialog = null }, onEditMaterial = { viewModel.updateMaterial(it); showEditDialog = null }, darkMode = darkMode, existingMaterials = materials) }
         showRemoveDialog?.let { RemoveMaterialDialog(material = it, onDismiss = { showRemoveDialog = null }, onRemove = { m, q -> viewModel.removeMaterial(m, q); showRemoveDialog = null }, darkMode = darkMode) }

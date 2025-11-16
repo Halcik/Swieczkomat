@@ -19,17 +19,23 @@ class CandleViewModel(private val candleDao: CandleDao) : ViewModel() {
         }
     }
 
+    fun updateCandle(candle: Candle) {
+        viewModelScope.launch { candleDao.update(candle) }
+    }
+
+    fun deleteCandle(id: Int) {
+        viewModelScope.launch { candleDao.deleteById(id) }
+    }
+
     fun addBurnTime(id: Int, minutesToAdd: Int) {
-        viewModelScope.launch {
-            val currentList = candleDao.getAllCandles()
-            // Simplified: fetch latest snapshot via collection not ideal; better separate query but kept minimal.
-            // In real scenario create dedicated query to get single candle.
-        }
+        viewModelScope.launch { candleDao.incrementBurnTime(id, minutesToAdd) }
     }
 
     fun setBurnTime(id: Int, minutes: Int) {
         viewModelScope.launch { candleDao.updateBurnTime(id, minutes) }
     }
+
+    suspend fun getById(id: Int): Candle? = candleDao.getById(id)
 }
 
 class CandleViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
