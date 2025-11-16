@@ -33,6 +33,12 @@ class MaterialsViewModel(private val materialDao: MaterialDao) : ViewModel() {
         }
     }
 
+    fun updateMaterial(material: Material) {
+        viewModelScope.launch {
+            materialDao.update(material)
+        }
+    }
+
     fun removeMaterial(material: Material, quantityToRemove: Double) {
         viewModelScope.launch {
             if (quantityToRemove >= material.quantity) {
